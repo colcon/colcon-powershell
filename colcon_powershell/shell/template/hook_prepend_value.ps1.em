@@ -1,4 +1,4 @@
-# generated from colcon_core/shell/template/hook_prepend_value.ps1.em
+# generated from colcon_powershell/shell/template/hook_prepend_value.ps1.em
 
 @{
 value = '$env:COLCON_CURRENT_PREFIX'

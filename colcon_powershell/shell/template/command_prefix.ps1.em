@@ -1,4 +1,4 @@
-# generated from colcon_core/shell/template/command_prefix.ps1.em
+# generated from colcon_powershell/shell/template/command_prefix.ps1.em
 @[for pkg_name, pkg_install_base in dependencies.items()]@
 @{
 import os
