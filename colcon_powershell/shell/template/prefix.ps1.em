@@ -14,7 +14,7 @@ function colcon_prefix_source_powershell_script {
     }
     . "$_colcon_prefix_source_powershell_script"
   } else {
-    echo "not found: '$_colcon_prefix_source_powershell_script'" 1>&2
+    Write-Error "not found: '$_colcon_prefix_source_powershell_script'"
   }
 }
 
