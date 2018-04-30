@@ -37,7 +37,7 @@ function colcon_prepend_unique_value {
 }
 
 # function to source another script with conditional trace output
-# first argument: the name of the script file
+# first argument: the path of the script
 # additional arguments: arguments to the script
 function colcon_package_source_powershell_script {
   param (
