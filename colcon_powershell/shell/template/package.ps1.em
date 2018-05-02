@@ -62,7 +62,7 @@ function colcon_package_source_powershell_script {
 $env:COLCON_CURRENT_PREFIX=(Get-Item $PSCommandPath).Directory.Parent.Parent.FullName
 
 @[end if]@
-colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX/@(hook[0])"@
+colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\@(hook[0])"@
 @[  for hook_arg in hook[1]]@
  @(hook_arg)@
 @[  end for]

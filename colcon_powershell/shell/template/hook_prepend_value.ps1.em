@@ -3,6 +3,6 @@
 @{
 value = '$env:COLCON_CURRENT_PREFIX'
 if subdirectory:
-    value += '/' + subdirectory
+    value += '\\' + subdirectory
 }@
 colcon_prepend_unique_value @(name) "@(value)"

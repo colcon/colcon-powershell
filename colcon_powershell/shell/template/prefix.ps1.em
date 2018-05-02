@@ -23,8 +23,8 @@ function _colcon_prefix_powershell_source_script {
 
 # source packages
 @[  for i, pkg_name in enumerate(pkg_names)]@
-$env:COLCON_CURRENT_PREFIX=(Split-Path $PSCommandPath -Parent) + "@('' if merge_install else ('/' + pkg_name))"
-_colcon_prefix_powershell_source_script "$env:COLCON_CURRENT_PREFIX/share/@(pkg_name)/package.ps1"
+$env:COLCON_CURRENT_PREFIX=(Split-Path $PSCommandPath -Parent) + "@('' if merge_install else ('\\' + pkg_name))"
+_colcon_prefix_powershell_source_script "$env:COLCON_CURRENT_PREFIX\share\@(pkg_name)\package.ps1"
 @[    if i < len(pkg_names) - 1]@
 
 @[    end if]@
