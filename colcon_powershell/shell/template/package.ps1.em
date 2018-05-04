@@ -37,7 +37,7 @@ function colcon_prepend_unique_value {
 }
 
 # function to source another script with conditional trace output
-# first argument: the name of the script file
+# first argument: the path of the script
 # additional arguments: arguments to the script
 function colcon_package_source_powershell_script {
   param (
@@ -62,7 +62,7 @@ function colcon_package_source_powershell_script {
 $env:COLCON_CURRENT_PREFIX=(Get-Item $PSCommandPath).Directory.Parent.Parent.FullName
 
 @[end if]@
-colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX/@(hook[0])"@
+colcon_package_source_powershell_script "$env:COLCON_CURRENT_PREFIX\@(hook[0])"@
 @[  for hook_arg in hook[1]]@
  @(hook_arg)@
 @[  end for]
