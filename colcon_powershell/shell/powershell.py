@@ -53,7 +53,7 @@ class PowerShellExtension(ShellExtensionPoint):
 
     def __init__(self):  # noqa: D107
         super().__init__()
-        satisfies_version(ShellExtensionPoint.EXTENSION_POINT_VERSION, '^1.0')
+        satisfies_version(ShellExtensionPoint.EXTENSION_POINT_VERSION, '^2.0')
 
         # HACK heuristics to determine if the parent shell is PowerShell
         if sys.platform == 'win32':
@@ -62,9 +62,7 @@ class PowerShellExtension(ShellExtensionPoint):
         else:
             self._is_primary = bool(os.environ.get('PSModulePath'))
 
-    def create_prefix_script(
-        self, prefix_path, pkg_names, merge_install
-    ):  # noqa: D102
+    def create_prefix_script(self, prefix_path, merge_install):  # noqa: D102
         prefix_env_path = prefix_path / 'local_setup.ps1'
         logger.info(
             "Creating prefix script '{prefix_env_path}'".format_map(locals()))
@@ -72,10 +70,13 @@ class PowerShellExtension(ShellExtensionPoint):
             Path(__file__).parent / 'template' / 'prefix.ps1.em',
             prefix_env_path,
             {
-                'pkg_names': pkg_names,
+                'python_executable': sys.executable,
                 'merge_install': merge_install,
                 'package_script_no_ext': 'package',
             })
+        shutil.copy(
+            str(self._get_prefix_util_path()),
+            str(prefix_path / '_local_setup_util.py'))
 
         prefix_chain_env_path = prefix_path / 'setup.ps1'
         logger.info(

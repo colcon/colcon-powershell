@@ -2,7 +2,22 @@
 
 # This script extends the environment with all packages contained in this
 # prefix path.
-@[if pkg_names]@
+
+# use the Python executable known at configure time
+$_colcon_python_executable="@(python_executable)"
+# allow overriding it with a custom location
+if ($env:COLCON_PYTHON_EXECUTABLE) {
+  $_colcon_python_executable="$env:COLCON_CURRENT_PREFIX"
+}
+# if the Python executable doesn't exist try another fall back
+if (!(Test-Path "$_colcon_python_executable" -PathType Leaf)) {
+  if (Get-Command "python" -ErrorAction SilentlyContinue) {
+    $_colcon_python_executable="python"
+  } else {
+    echo "error: unable to find fallback Python executable"
+    return 1
+  }
+}
 
 # function to source another script with conditional trace output
 # first argument: the path of the script
@@ -21,12 +36,16 @@ function _colcon_prefix_powershell_source_script {
   }
 }
 
-# source packages
-@[  for i, pkg_name in enumerate(pkg_names)]@
-$env:COLCON_CURRENT_PREFIX=(Split-Path $PSCommandPath -Parent) + "@('' if merge_install else ('\\' + pkg_name))"
-_colcon_prefix_powershell_source_script "$env:COLCON_CURRENT_PREFIX\share\@(pkg_name)\package.ps1"
-@[    if i < len(pkg_names) - 1]@
+# get all packages in topological order
+$_colcon_ordered_packages = & "$_colcon_python_executable" "$(Split-Path $PSCommandPath -Parent)/_local_setup_util.py"@
+@[if merge_install]@
+ --merged-install@
+@[end if]
 
-@[    end if]@
-@[  end for]@
-@[end if]@
+# source package specific scripts in topological order
+ForEach ($_colcon_package_name in $($_colcon_ordered_packages -split "`r`n"))
+{
+  # setting COLCON_CURRENT_PREFIX avoids relying on the build time prefix of the sourced script
+  $env:COLCON_CURRENT_PREFIX=(Split-Path $PSCommandPath -Parent) + "@('' if merge_install else '\\$_colcon_package_name')"
+  _colcon_prefix_powershell_source_script "$env:COLCON_CURRENT_PREFIX\share\$_colcon_package_name\@(package_script_no_ext).ps1"
+}
