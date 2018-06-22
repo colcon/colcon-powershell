@@ -1,7 +1,6 @@
 # Copyright 2016-2018 Dirk Thomas
 # Licensed under the Apache License, Version 2.0
 
-from collections import OrderedDict
 import os
 from pathlib import Path
 import shutil
@@ -10,6 +9,7 @@ import sys
 from colcon_core.environment_variable import EnvironmentVariable
 from colcon_core.plugin_system import satisfies_version
 from colcon_core.plugin_system import SkipExtensionException
+from colcon_core.shell import check_dependency_availability
 from colcon_core.shell import get_colcon_prefix_path
 from colcon_core.shell import get_environment_variables
 from colcon_core.shell import logger
@@ -126,25 +126,15 @@ class PowerShellExtension(ShellExtensionPoint):
         if not self._is_primary:
             raise SkipExtensionException('Not usable outside of PowerShell')
 
+        # check if all dependencies are available
+        # removes dependencies available in the environment from the parameter
+        check_dependency_availability(dependencies)
+
         hook_path = build_base / ('colcon_command_prefix_%s.ps1' % task_name)
         expand_template(
             Path(__file__).parent / 'template' / 'command_prefix.ps1.em',
             hook_path,
             {'dependencies': dependencies})
-
-        # ensure that the referenced scripts exist
-        missing = OrderedDict()
-        for pkg_name, pkg_install_base in dependencies.items():
-            pkg_script = Path(
-                pkg_install_base) / 'share' / pkg_name / 'package.ps1'
-            if not pkg_script.exists():
-                missing[pkg_name] = str(pkg_script)
-        if missing:
-            raise RuntimeError(
-                'Failed to find the following files:' +
-                ''.join('\n- %s' % path for path in missing.values()) +
-                '\nCheck that the following packages have been built:' +
-                ''.join('\n- %s' % name for name in missing.keys()))
 
         cmd = [
             '.',
