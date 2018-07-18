@@ -6,7 +6,7 @@
 # check environment variable for custom Python executable
 if ($env:COLCON_PYTHON_EXECUTABLE) {
   if (!(Test-Path "$env:COLCON_PYTHON_EXECUTABLE" -PathType Leaf)) {
-    echo "error: COLCON_PYTHON_EXECUTABLE '%COLCON_PYTHON_EXECUTABLE%' doesn't exist"
+    echo "error: COLCON_PYTHON_EXECUTABLE '$env:COLCON_PYTHON_EXECUTABLE' doesn't exist"
     return 1
   }
   $_colcon_python_executable="$env:COLCON_PYTHON_EXECUTABLE"
