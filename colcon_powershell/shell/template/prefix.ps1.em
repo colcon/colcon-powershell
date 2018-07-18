@@ -3,19 +3,24 @@
 # This script extends the environment with all packages contained in this
 # prefix path.
 
-# use the Python executable known at configure time
-$_colcon_python_executable="@(python_executable)"
-# allow overriding it with a custom location
+# check environment variable for custom Python executable
 if ($env:COLCON_PYTHON_EXECUTABLE) {
-  $_colcon_python_executable="$env:COLCON_CURRENT_PREFIX"
-}
-# if the Python executable doesn't exist try another fall back
-if (!(Test-Path "$_colcon_python_executable" -PathType Leaf)) {
-  if (Get-Command "python" -ErrorAction SilentlyContinue) {
-    $_colcon_python_executable="python"
-  } else {
-    echo "error: unable to find fallback Python executable"
+  if (!(Test-Path "$env:COLCON_CURRENT_PREFIX" -PathType Leaf)) {
+    echo "error: COLCON_PYTHON_EXECUTABLE '%COLCON_PYTHON_EXECUTABLE%' doesn't exist"
     return 1
+  }
+  $_colcon_python_executable="$env:COLCON_CURRENT_PREFIX"
+} else {
+  # use the Python executable known at configure time
+  $_colcon_python_executable="@(python_executable)"
+  # if it doesn't exist try a fall back
+  if (!(Test-Path "$_colcon_python_executable" -PathType Leaf)) {
+    if (Get-Command "python" -ErrorAction SilentlyContinue) {
+      $_colcon_python_executable="python"
+    } else {
+      echo "error: unable to find Python executable"
+      return 1
+    }
   }
 }
 
