@@ -15,11 +15,15 @@ if ($env:COLCON_PYTHON_EXECUTABLE) {
   $_colcon_python_executable="@(python_executable)"
   # if it doesn't exist try a fall back
   if (!(Test-Path "$_colcon_python_executable" -PathType Leaf)) {
-    if (!(Get-Command "python" -ErrorAction SilentlyContinue)) {
-      echo "error: unable to find Python executable"
+@{
+import sys
+python_fallback_executable = 'python' if sys.platform == 'win32' else 'python3'
+}@
+    if (!(Get-Command "@(python_fallback_executable)" -ErrorAction SilentlyContinue)) {
+      echo "error: unable to find @(python_fallback_executable) executable"
       exit 1
     }
-    $_colcon_python_executable="python"
+    $_colcon_python_executable="@(python_fallback_executable)"
   }
 }
 
