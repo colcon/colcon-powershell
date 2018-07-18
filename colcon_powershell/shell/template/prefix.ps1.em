@@ -7,7 +7,7 @@
 if ($env:COLCON_PYTHON_EXECUTABLE) {
   if (!(Test-Path "$env:COLCON_PYTHON_EXECUTABLE" -PathType Leaf)) {
     echo "error: COLCON_PYTHON_EXECUTABLE '$env:COLCON_PYTHON_EXECUTABLE' doesn't exist"
-    return 1
+    exit 1
   }
   $_colcon_python_executable="$env:COLCON_PYTHON_EXECUTABLE"
 } else {
@@ -15,12 +15,11 @@ if ($env:COLCON_PYTHON_EXECUTABLE) {
   $_colcon_python_executable="@(python_executable)"
   # if it doesn't exist try a fall back
   if (!(Test-Path "$_colcon_python_executable" -PathType Leaf)) {
-    if (Get-Command "python" -ErrorAction SilentlyContinue) {
-      $_colcon_python_executable="python"
-    } else {
+    if (!(Get-Command "python" -ErrorAction SilentlyContinue)) {
       echo "error: unable to find Python executable"
-      return 1
+      exit 1
     }
+    $_colcon_python_executable="python"
   }
 }
 
