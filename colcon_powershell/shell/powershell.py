@@ -62,6 +62,9 @@ class PowerShellExtension(ShellExtensionPoint):
         else:
             self._is_primary = bool(os.environ.get('PSModulePath'))
 
+    def get_file_extensions(self):  # noqa: D102
+        return ('ps1', )
+
     def create_prefix_script(self, prefix_path, merge_install):  # noqa: D102
         prefix_env_path = prefix_path / 'local_setup.ps1'
         logger.info(
