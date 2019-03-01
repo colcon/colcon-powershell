@@ -20,10 +20,10 @@ function _colcon_prefix_chain_powershell_source_script {
     Write-Error "not found: '$_colcon_prefix_chain_powershell_source_script_param'"
   }
 }
-@[if colcon_prefix_path]@
+@[if chained_prefix_path]@
 
 # source chained prefixes
-@[  for prefix in reversed(colcon_prefix_path)]@
+@[  for prefix in reversed(chained_prefix_path)]@
 _colcon_prefix_chain_powershell_source_script "@(prefix)\@(prefix_script_no_ext).ps1"
 @[  end for]@
 @[end if]@
