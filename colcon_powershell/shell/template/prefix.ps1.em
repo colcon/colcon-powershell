@@ -44,16 +44,17 @@ function _colcon_prefix_powershell_source_script {
   }
 }
 
-# get all packages in topological order
-$_colcon_ordered_packages = & "$_colcon_python_executable" "$(Split-Path $PSCommandPath -Parent)/_local_setup_util.py"@
+# get all commands in topological order
+$_colcon_ordered_commands = & "$_colcon_python_executable" "$(Split-Path $PSCommandPath -Parent)/_local_setup_util_ps1.py" ps1@
 @[if merge_install]@
  --merged-install@
 @[end if]
 
-# source package specific scripts in topological order
-ForEach ($_colcon_package_name in $($_colcon_ordered_packages -split "`r`n"))
-{
-  # setting COLCON_CURRENT_PREFIX avoids relying on the build time prefix of the sourced script
-  $env:COLCON_CURRENT_PREFIX=(Split-Path $PSCommandPath -Parent) + "@('' if merge_install else '\\$_colcon_package_name')"
-  _colcon_prefix_powershell_source_script "$env:COLCON_CURRENT_PREFIX\share\$_colcon_package_name\@(package_script_no_ext).ps1"
+# execute all commands in topological order
+if ($env:COLCON_TRACE) {
+  echo "Execute generated script:"
+  echo "<<<"
+  $_colcon_ordered_commands.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | Write-Output
+  echo ">>>"
 }
+$_colcon_ordered_commands.Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries) | Invoke-Expression
