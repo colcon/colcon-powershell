@@ -51,9 +51,15 @@ class PowerShellExtension(ShellExtensionPoint):
     # in order to take precedence for command environment generation
     PRIORITY = 300
 
+    FORMAT_STR_COMMENT_LINE = '# {comment}'
+    FORMAT_STR_SET_ENV_VAR = 'Set-Item -Path "Env:{name}" -Value "{value}"'
+    FORMAT_STR_USE_ENV_VAR = '$env:{name}'
+    FORMAT_STR_INVOKE_SCRIPT = '_colcon_prefix_powershell_source_script ' \
+        '"{script_path}"'
+
     def __init__(self):  # noqa: D107
         super().__init__()
-        satisfies_version(ShellExtensionPoint.EXTENSION_POINT_VERSION, '^2.0')
+        satisfies_version(ShellExtensionPoint.EXTENSION_POINT_VERSION, '^2.1')
 
         # HACK heuristics to determine if the parent shell is PowerShell
         if sys.platform == 'win32':
@@ -77,9 +83,12 @@ class PowerShellExtension(ShellExtensionPoint):
                 'merge_install': merge_install,
                 'package_script_no_ext': 'package',
             })
-        shutil.copy(
-            str(self._get_prefix_util_path()),
-            str(prefix_path / '_local_setup_util.py'))
+
+        prefix_util_path = prefix_path / '_local_setup_util_ps1.py'
+        logger.info("Creating prefix util module '%s'" % prefix_util_path)
+        expand_template(
+            self._get_prefix_util_template_path(),
+            prefix_util_path, {'shell_extension': self})
 
         prefix_chain_env_path = prefix_path / 'setup.ps1'
         logger.info(
