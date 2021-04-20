@@ -102,9 +102,9 @@ class PowerShellExtension(ShellExtensionPoint):
                 'prefix_script_no_ext': 'local_setup',
             })
 
-    def create_package_script(
+    def create_package_script(  # noqa: D102
         self, prefix_path, pkg_name, hooks
-    ):  # noqa: D102
+    ):
         pkg_env_path = prefix_path / 'share' / pkg_name / 'package.ps1'
         logger.info(
             "Creating package script '{pkg_env_path}'".format_map(locals()))
@@ -117,9 +117,9 @@ class PowerShellExtension(ShellExtensionPoint):
                     lambda hook: str(hook[0]).endswith('.ps1'), hooks)),
             })
 
-    def create_hook_prepend_value(
+    def create_hook_prepend_value(  # noqa: D102
         self, env_hook_name, prefix_path, pkg_name, name, subdirectory,
-    ):  # noqa: D102
+    ):
         hook_path = prefix_path / 'share' / pkg_name / 'hook' / \
             ('%s.ps1' % env_hook_name)
         logger.info("Creating environment hook '%s'" % hook_path)
@@ -132,9 +132,9 @@ class PowerShellExtension(ShellExtensionPoint):
             })
         return hook_path
 
-    async def generate_command_environment(
+    async def generate_command_environment(  # noqa: D102
         self, task_name, build_base, dependencies,
-    ):  # noqa: D102
+    ):
         global powershell_executable_name
         if not self._is_primary:
             raise SkipExtensionException('Not usable outside of PowerShell')
