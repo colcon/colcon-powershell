@@ -117,6 +117,21 @@ class PowerShellExtension(ShellExtensionPoint):
                     lambda hook: str(hook[0]).endswith('.ps1'), hooks)),
             })
 
+    def create_hook_append_value(  # noqa: D102
+        self, env_hook_name, prefix_path, pkg_name, name, subdirectory,
+    ):
+        hook_path = prefix_path / 'share' / pkg_name / 'hook' / \
+            ('%s.ps1' % env_hook_name)
+        logger.info("Creating environment hook '%s'" % hook_path)
+        expand_template(
+            Path(__file__).parent / 'template' / 'hook_append_value.ps1.em',
+            hook_path,
+            {
+                'name': name,
+                'subdirectory': subdirectory,
+            })
+        return hook_path
+
     def create_hook_prepend_value(  # noqa: D102
         self, env_hook_name, prefix_path, pkg_name, name, subdirectory,
     ):
