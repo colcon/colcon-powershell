@@ -178,7 +178,7 @@ class PowerShellExtension(ShellExtensionPoint):
             raise RuntimeError(
                 "Could not find '{powershell_executable_name}' executable"
                 .format(powershell_executable_name=powershell_executable_name))
-        cmd = [POWERSHELL_EXECUTABLE, '-Command', ' '.join(cmd)]
+        cmd = [POWERSHELL_EXECUTABLE, '-NoProfile', '-Command', ' '.join(cmd)]
         env = await get_environment_variables(
             cmd, cwd=str(build_base), shell=False)
 
