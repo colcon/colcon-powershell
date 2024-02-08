@@ -1,6 +1,7 @@
 apache
 colcon
 iterdir
+linter
 noqa
 pathext
 pathexts
@@ -9,6 +10,7 @@ plugin
 powershell
 prepend
 pwsh
+pydocstyle
 pytest
 rtype
 scspell
