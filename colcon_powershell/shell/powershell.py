@@ -157,7 +157,6 @@ class PowerShellExtension(ShellExtensionPoint):
     async def generate_command_environment(  # noqa: D102
         self, task_name, build_base, dependencies,
     ):
-        global powershell_executable_name
         if not self._is_primary:
             raise SkipExtensionException('Not usable outside of PowerShell')
 
