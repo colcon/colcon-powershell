@@ -1,3 +1,4 @@
+@{import os}
 # generated from colcon_powershell/shell/template/prefix_chain.ps1.em
 
 # This script extends the environment with the environment of other prefix
@@ -24,10 +25,10 @@ function _colcon_prefix_chain_powershell_source_script {
 
 # source chained prefixes
 @[  for prefix in reversed(chained_prefix_path)]@
-_colcon_prefix_chain_powershell_source_script "@(prefix)\@(prefix_script_no_ext).ps1"
+_colcon_prefix_chain_powershell_source_script "@(prefix)@(os.sep)@(prefix_script_no_ext).ps1"
 @[  end for]@
 @[end if]@
 
 # source this prefix
 $env:COLCON_CURRENT_PREFIX=(Split-Path $PSCommandPath -Parent)
-_colcon_prefix_chain_powershell_source_script "$env:COLCON_CURRENT_PREFIX\@(prefix_script_no_ext).ps1"
+_colcon_prefix_chain_powershell_source_script "$env:COLCON_CURRENT_PREFIX@(os.sep)@(prefix_script_no_ext).ps1"
