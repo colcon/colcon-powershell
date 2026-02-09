@@ -68,6 +68,9 @@ class PowerShellExtension(ShellExtensionPoint):
         else:
             self._is_primary = bool(os.environ.get('PSModulePath'))
 
+        if not POWERSHELL_EXECUTABLE:
+            self._is_primary = False
+
     def get_file_extensions(self):  # noqa: D102
         return ('ps1', )
 
