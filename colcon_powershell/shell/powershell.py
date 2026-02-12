@@ -15,6 +15,7 @@ from colcon_core.shell import get_environment_variables
 from colcon_core.shell import logger
 from colcon_core.shell import ShellExtensionPoint
 from colcon_core.shell.template import expand_template
+import psutil
 
 """Environment variable to override the CMake executable"""
 POWERSHELL_COMMAND_ENVIRONMENT_VARIABLE = EnvironmentVariable(
@@ -44,6 +45,20 @@ POWERSHELL_EXECUTABLE = which_executable(
     POWERSHELL_COMMAND_ENVIRONMENT_VARIABLE.name, powershell_executable_name)
 
 
+def parent_process_is_powershell():
+    """Determine if the parent process is PowerShell.
+
+    In case the executable name is not found,
+    it is assumed that the parent process is not PowerShell.
+    """
+    parent = psutil.Process().parent()
+    if parent is None:
+        return False
+
+    parent_name = parent.name()
+    return parent_name == powershell_executable_name
+
+
 class PowerShellExtension(ShellExtensionPoint):
     """Generate `.ps1` scripts to extend the environment."""
 
@@ -66,7 +81,7 @@ class PowerShellExtension(ShellExtensionPoint):
             pathexts = os.environ.get('PATHEXT', '').lower().split(os.pathsep)
             self._is_primary = '.cpl' in pathexts
         else:
-            self._is_primary = bool(os.environ.get('PSModulePath'))
+            self._is_primary = parent_process_is_powershell()
 
         if not POWERSHELL_EXECUTABLE:
             self._is_primary = False
