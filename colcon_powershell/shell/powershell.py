@@ -11,7 +11,7 @@ from colcon_core.plugin_system import satisfies_version
 from colcon_core.plugin_system import SkipExtensionException
 from colcon_core.prefix_path import get_chained_prefix_path
 from colcon_core.shell import check_dependency_availability
-from colcon_core.shell import get_environment_variables
+from colcon_core.shell import get_null_separated_environment_variables
 from colcon_core.shell import logger
 from colcon_core.shell import ShellExtensionPoint
 from colcon_core.shell.template import expand_template
@@ -181,14 +181,14 @@ class PowerShellExtension(ShellExtensionPoint):
             '(Get-Item Env:).GetEnumerator()',
             '|',
             'ForEach-Object',
-            '{ "$($_.Key)=$($_.Value)" }'
+            '{ [Console]::Write("$($_.Key)=$($_.Value)`0") }'
         ]
         if POWERSHELL_EXECUTABLE is None:
             raise RuntimeError(
                 "Could not find '{powershell_executable_name}' executable"
                 .format(powershell_executable_name=powershell_executable_name))
         cmd = [POWERSHELL_EXECUTABLE, '-NoProfile', '-Command', ' '.join(cmd)]
-        env = await get_environment_variables(
+        env = await get_null_separated_environment_variables(
             cmd, cwd=str(build_base), shell=False)
 
         # write environment variables to file for debugging
