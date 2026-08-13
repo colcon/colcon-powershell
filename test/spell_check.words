@@ -1,7 +1,10 @@
 apache
+asyncio
 colcon
+distro
 iterdir
 linter
+monkeypatch
 noqa
 pathext
 pathexts
@@ -12,6 +15,7 @@ prepend
 pwsh
 pydocstyle
 pytest
+pythonpath
 rtype
 scspell
 setuptools
